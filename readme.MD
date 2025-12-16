@@ -24,17 +24,17 @@ nuget install VL.CoreLib.Addons
 ```
 
 ## Notice
+
 This library is in its early stages and may undergo significant changes.
 
-
 ## Contributing
- 
+
 [CONTRIBUTING](CONTRIBUTING.md)
 
 ## Questions
 
-Issues avalible via [issues][https://github.com/antokhio/VL.Core.Addons/issues].
-Questions can be askend on [forum][https://forum.vvvv.org]
+Issues avalible via [issues](https://github.com/antokhio/VL.Core.Addons/issues).
+Questions can be askend on [forum](https://forum.vvvv.org).
 
 Try it with vvvv, the visual live-programming environment for .NET  
 Download: http://visualprogramming.net
