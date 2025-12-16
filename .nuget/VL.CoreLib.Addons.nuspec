@@ -13,7 +13,7 @@
     <tags>vl, vvvv, gamma, corelib, addons, csharp</tags>
     <readme>README.md</readme>
 	  <license type="file">LICENSE</license>
-	  <icon>icon\icon.png</icon>
+	  <!-- <icon>icon\icon.png</icon> -->
     <dependencies>
       <group targetFramework=".net8.0">
         <dependency id="VL.Core" version="2025.7.0" />
