@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="CONTRIBUTING.md" />
+    <File Path="LICENSE" />
+    <File Path="readme.MD" />
+  </Folder>
+  <Project Path="VL.CoreLib.Addons/src/VL.CoreLib.Addons.csproj" />
+</Solution>
