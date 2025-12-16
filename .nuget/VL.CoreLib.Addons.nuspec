@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <id>VL.CoreLib.Addons</id>
+    <title>VL.CoreLib.Addons</title>
+    <version>0.0.0</version>
+    <authors>antokhio</authors>
+    <owners>antokhio</owners>
+    <projectUrl>https://github.com/antokhio/VL.CoreLib.Addons</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>Library bridging the gap between VL's visual patching APIs and C# code APIs.</summary>
+    <description>VL.CoreLib.Addons abstracts common use case patterns to bridge the gap between VL's visual patching APIs and C# code APIs.</description>
+    <tags>vl, vvvv, gamma, corelib, addons, csharp</tags>
+    <readme>README.md</readme>
+	  <license type="file">LICENSE</license>
+	  <icon>icon\icon.png</icon>
+    <dependencies>
+      <group targetFramework=".net8.0">
+        <dependency id="VL.Core" version="2025.7.0" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\VL.CoreLib.Addons\lib\net8.0\**" target="lib\net8.0\" exclude="" />
+    <file src="..\VL.CoreLib.Addons\*.vl" target="" exclude="" />
+    <file src="..\VL.CoreLib.Addons\help\**" target="help\" exclude="" />
+    <!-- <file src="..\VL.Avalonia\assets\**" target="assets\" exclude="" /> -->
+    <!-- <file src="..\icon.png" target="icon\" /> -->
+    <file src="..\README.md" />
+    <file src="..\LICENSE" />
+  </files>
+</package>
