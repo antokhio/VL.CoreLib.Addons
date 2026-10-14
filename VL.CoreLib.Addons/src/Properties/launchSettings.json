@@ -1,12 +1,9 @@
 {
   "profiles": {
-    "VL.Core.Addons": {
-      "commandName": "Project"
-    },
-    "dev/antokhio": {
+    "dev": {
       "commandName": "Executable",
-      "executablePath": "C:\\Program Files\\vvvv\\vvvv_gamma_7.1-0116-gaeae322323-win-x64\\vvvv.exe",
-      "commandLineArgs": "--package-repositories D:\\VVVV\\VL.Core.Addons; ^\r\n--editable-packages VL.Core.Addons;"
+      "executablePath": "C:\\Program Files\\vvvv\\vvvv_gamma_7.4-win-x64\\vvvv.exe",
+      "commandLineArgs": "--package-repositories \"$(MSBuildProjectDirectory)\\..\\..\"; ^\r\n--editable-packages VL.CoreLib.Addons;"
     }
   }
 }

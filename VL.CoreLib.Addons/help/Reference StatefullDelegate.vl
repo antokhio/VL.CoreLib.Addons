@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="Dt8WuQR6s1FNJbvm3jJoGD" LanguageVersion="2025.7.1-0116-gaeae322323" Version="0.128">
-  <NugetDependency Id="LYH37qBrwT2QYI8fOOqrFy" Location="VL.CoreLib" Version="2025.7.1-0116-gaeae322323" />
+<Document xmlns:p="property" xmlns:r="reflection" Id="Dt8WuQR6s1FNJbvm3jJoGD" LanguageVersion="2025.7.4" Version="0.128">
+  <NugetDependency Id="LYH37qBrwT2QYI8fOOqrFy" Location="VL.CoreLib" Version="2025.7.4" />
   <Patch Id="UJlwwwEavVDL17CQJKuTel">
     <Canvas Id="BO8CS6ubE9oM9DRBlCwj3e" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
     <!--
@@ -16,9 +16,8 @@
       <Patch Id="Jq4uJo2wrB2PmHcegbKy1b">
         <Canvas Id="RnRG5R167PhMC3hcq4EVrZ" CanvasType="Group">
           <Node Bounds="858,250,106,108" Id="FPBobH6pdGsL8JFEpzhZMU">
-            <p:NodeReference LastCategoryFullName="Primitives.StetefulDelegate" LastDependency="VL.CoreLib.Addons.vl">
+            <p:NodeReference LastCategoryFullName="Core.Primitives" LastDependency="VL.CoreLib.Addons.vl">
               <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
-              <CategoryReference Kind="Category" Name="StetefulDelegate" />
               <Choice Kind="ProcessAppFlag" Name="StatefullDelegatePatch" />
             </p:NodeReference>
             <Pin Id="Gs8spgJjbhfLyKULMyQMtr" Name="Input" Kind="InputPin" />

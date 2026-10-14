@@ -1,6 +1,6 @@
 ﻿using VL.Core.Import;
 
-namespace VL.CoreLib.Addons.Primitives.StetefulDelegate
+namespace VL.CoreLib.Addons.Primitives
 {
     /// <summary>
     /// Helper class that manages the lifecycle of a stateful operation.

@@ -17,6 +17,14 @@ The `StatefullDelegatePatch<TState, TIn, TOut>` is a Process Node that:
 1.  **Maintains State**: Handles the lifecycle of a state object (creation, updates, and disposal).
 2.  **Exposes Logic as Delegate**: Provides an `Output` property of type `Func<TIn, TOut>`. Invoking this delegate executes the patch's logic using the internal state.
 
+#### SingleInstancePerApp (Statefull)
+
+The `SingleInstancePerAppStatefullNode<TState, TOut>` is
+
+1.  **One State Per App**: All instances with the same type arguments (and optional `Key`) share a single state. The state is disposed once the last instance is disposed or the app restarts.
+2.  **Updates Once Per Frame**: Only the first `Update` call within a frame advances the state; every other instance receives that frame's cached result.
+3.  **Exposes Logic as Delegate**: Invoking `Output` advances the shared state on every call.
+
 ## Installation
 
 ```

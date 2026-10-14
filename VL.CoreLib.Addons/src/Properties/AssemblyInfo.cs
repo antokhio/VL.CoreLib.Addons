@@ -1,3 +1,3 @@
 using VL.Core.Import;
 
-[assembly: ImportAsIs(Namespace = "VL.CoreLib.Addons")]
+[assembly: ImportAsIs(Namespace = "VL.CoreLib.Addons", Category = "Core")]
