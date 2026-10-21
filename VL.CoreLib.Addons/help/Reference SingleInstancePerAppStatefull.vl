@@ -31,9 +31,7 @@
                     <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
                     <Choice Kind="ProcessAppFlag" Name="SingleInstancePerApp (Statefull)" />
                   </p:NodeReference>
-                  <Pin Id="D7XUQDR3LhoMjxQ8e3yrY1" Name="Key" Kind="InputPin" />
                   <Pin Id="IRrdV0PcR8pMBtqNaZOfa6" Name="Result" Kind="OutputPin" />
-                  <Pin Id="SKgygybLCt6O3T9I7XM2j0" Name="Output" Kind="OutputPin" />
                   <Patch Id="UmBeV2mnEz3MIrKu8UWnFM" ManuallySortedPins="true">
                     <Patch Id="TAaluyxzX8xMAbEwU8Ax3g" Name="Create" ManuallySortedPins="true" />
                     <Patch Id="GJx5MurffV7MIP2BFqAZ47" Name="Update" ParticipatingElements="IXf2gXITKAVPvnr4KH7joc" ManuallySortedPins="true">
@@ -91,6 +89,8 @@
                       <ControlPoint Id="TxyYxGSB4oaLC1EqoOkxJG" Bounds="878,552" Alignment="Bottom" />
                     </Node>
                   </Patch>
+                  <Pin Id="JDDvvl6OgxULSY3eiY2HFP" Name="Key" Kind="InputPin" />
+                  <Pin Id="J8uORDWDuzQMO5E163kLwC" Name="Output" Kind="OutputPin" />
                 </Node>
                 <Pad Id="ET6Tw1lk7aGLIPKsEIGiEF" SlotId="KrOQzYaDtJjQWnnP7Gsw3k" Bounds="821,630" />
                 <ControlPoint Id="MbPNlA7rxWXPk1JALj3RGU" Bounds="823,690" />
@@ -148,7 +148,7 @@
             </p:NodeReference>
             <Patch Id="MkL3o8OjbdJOqjrKTWT9HW">
               <Canvas Id="U1aeAwmX9K7Owh3fyLylg4" CanvasType="Group">
-                <Node Bounds="369,228,95,79" Id="FLnyDUMIcQ7NE0RYdY1xzW">
+                <Node Bounds="369,228,105,79" Id="FLnyDUMIcQ7NE0RYdY1xzW">
                   <p:NodeReference LastCategoryFullName="Core.Primitives" LastDependency="VL.CoreLib.Addons.vl">
                     <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
                     <Choice Kind="ProcessAppFlag" Name="SingleInstancePerAppRegion" />
@@ -159,7 +159,6 @@
                     <Patch Id="HKCGOwr3bvEOJyWZWvTBpj" Name="Produce" ManuallySortedPins="true">
                       <Pin Id="Oj0OqFqf6P8MoMzhoPRBTy" Name="Result" Kind="OutputPin" />
                     </Patch>
-                    <Patch Id="OKa6fOmDqqkOFEcsdwL53v" Name="Dispose" ManuallySortedPins="true" />
                     <ControlPoint Id="O4tzf5FcWehL7DQjt8Oz2m" Bounds="423,300" />
                     <Node Bounds="381,251,45,19" Id="QV3XvJ9WOP0PUlL5YzJKWT">
                       <p:NodeReference LastCategoryFullName="Animation" LastDependency="VL.CoreLib.vl">
@@ -176,8 +175,9 @@
                       <Pin Id="KrB1tfTUDHbOj2Ti6cSo12" Name="On New Cycle" Kind="OutputPin" />
                       <Pin Id="OLidkqiklGBN14fqfld5Xc" Name="Cycles" Kind="OutputPin" />
                     </Node>
+                    <Patch Id="UhLqaPta35AOhEUrAq1jm2" Name="Dispose" />
                   </Patch>
-                  <Pin Id="RPQdai5hVsJNKutmBLmVnX" Name="Node Context" Kind="InputPin" IsHidden="true" />
+                  <Pin Id="HXagTRQcMBSM9weUdHRqfK" Name="Node Context" Kind="InputPin" IsHidden="true" />
                 </Node>
                 <ControlPoint Id="KYGUc8jHbWOLtU2W0gER3M" Bounds="371,380" />
               </Canvas>

@@ -88,7 +88,10 @@ internal sealed class SingleInstancePerAppStatefullSlot<TState, TOut> : IDisposa
 /// </summary>
 /// <typeparam name="TState">The type of the internal state shared by all instances.</typeparam>
 /// <typeparam name="TOut">The type of the return value.</typeparam>
-[ProcessNode(Name = "SingleInstancePerApp (Statefull)", FragmentSelection = FragmentSelection.Explicit)]
+[ProcessNode(
+    Name = "SingleInstancePerApp (Statefull)",
+    FragmentSelection = FragmentSelection.Explicit
+)]
 public class SingleInstancePerAppStatefullNode<TState, TOut> : IDisposable
 {
     private IResourceHandle<SingleInstancePerAppStatefullSlot<TState, TOut>>? _handle;
