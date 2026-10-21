@@ -6,23 +6,26 @@ using VL.Lib.Basics.Resources;
 
 namespace VL.CoreLib.Addons.Primitives
 {
-    public interface ISingleInstanceInlay<T>
-    {
-        T Produce();
-    }
-
     /// <summary>
     /// A region whose patch exists only once per app. All instances of the same region node
     /// (e.g. inside multiple instances of the surrounding patch) share one patch inlay.
     /// Only the first <c>Update</c> call within a frame executes the patch; all other instances
     /// get the cached value of that frame.
     /// </summary>
-    [ProcessNode(FragmentSelection = FragmentSelection.Explicit)]
+    [ProcessNode(
+        Name = "SingleInstancePerApp (Statefull)",
+        FragmentSelection = FragmentSelection.Explicit
+    )]
     [Region(SupportedBorderControlPoints = ControlPointType.None)]
     public sealed class SingleInstancePerAppRegion<T>
-        : IRegion<ISingleInstanceInlay<T>>,
+        : IRegion<SingleInstancePerAppRegion<T>.ISingleInstanceInlay<T>>,
             IDisposable
     {
+        public interface ISingleInstanceInlay<T>
+        {
+            T Produce();
+        }
+
         private readonly NodeContext _context;
 
         private Func<ISingleInstanceInlay<T>>? _factory;
