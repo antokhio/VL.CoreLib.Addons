@@ -137,6 +137,84 @@
             <Pin Id="N9ZKpyDrc95PjapqSyZadY" Name="Node Context" Kind="InputPin" IsHidden="true" />
           </Node>
           <Pad Id="Tg8LE9K9MKTOHgpGgmXguP" Comment="" Bounds="826,269,190,132" ShowValueBox="true" isIOBox="true" />
+          <!--
+
+    ************************ Counter2 ************************
+
+-->
+          <Node Name="Counter2" Bounds="309,220" Id="FUcsWtFD8mEQUVhq9RuXK2">
+            <p:NodeReference>
+              <Choice Kind="ClassDefinition" />
+            </p:NodeReference>
+            <Patch Id="MkL3o8OjbdJOqjrKTWT9HW">
+              <Canvas Id="U1aeAwmX9K7Owh3fyLylg4" CanvasType="Group">
+                <Node Bounds="369,228,95,79" Id="FLnyDUMIcQ7NE0RYdY1xzW">
+                  <p:NodeReference LastCategoryFullName="Core.Primitives" LastDependency="VL.CoreLib.Addons.vl">
+                    <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
+                    <Choice Kind="ProcessAppFlag" Name="SingleInstancePerAppRegion" />
+                  </p:NodeReference>
+                  <Pin Id="RtXMAzHvOOROkDPuAUsv9c" Name="Value" Kind="OutputPin" />
+                  <Patch Id="FKndNCTGgBNNRTSB4yzCOJ" ManuallySortedPins="true">
+                    <Patch Id="LkAsyKMFJFXNxZN6ThqFHF" Name="Create" ManuallySortedPins="true" />
+                    <Patch Id="HKCGOwr3bvEOJyWZWvTBpj" Name="Produce" ManuallySortedPins="true">
+                      <Pin Id="Oj0OqFqf6P8MoMzhoPRBTy" Name="Result" Kind="OutputPin" />
+                    </Patch>
+                    <Patch Id="OKa6fOmDqqkOFEcsdwL53v" Name="Dispose" ManuallySortedPins="true" />
+                    <ControlPoint Id="O4tzf5FcWehL7DQjt8Oz2m" Bounds="423,300" />
+                    <Node Bounds="381,251,45,19" Id="QV3XvJ9WOP0PUlL5YzJKWT">
+                      <p:NodeReference LastCategoryFullName="Animation" LastDependency="VL.CoreLib.vl">
+                        <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                        <Choice Kind="ProcessAppFlag" Name="LFO" />
+                      </p:NodeReference>
+                      <Pin Id="CRhcYS6N8ehLJa3mQrzHWW" Name="Node Context" Kind="InputPin" IsHidden="true" />
+                      <Pin Id="PUDp2MUH3s5ODfxO9uWpnM" Name="Clock" Kind="InputPin" IsHidden="true" />
+                      <Pin Id="GgoejenYqIEQHEPDGkG0RZ" Name="New Clock" Kind="InputPin" IsHidden="true" />
+                      <Pin Id="GQ1DJf6hPrrQa7PbwfHul1" Name="Period" Kind="InputPin" />
+                      <Pin Id="DlRrPm5P0DpLkJaKXAHNLR" Name="Pause" Kind="InputPin" />
+                      <Pin Id="FicZoJmqgJrOR5RND92wGb" Name="Reset" Kind="ApplyPin" />
+                      <Pin Id="PCU3EIH5FxpOf68eBgP0Mp" Name="Phase" Kind="OutputPin" />
+                      <Pin Id="KrB1tfTUDHbOj2Ti6cSo12" Name="On New Cycle" Kind="OutputPin" />
+                      <Pin Id="OLidkqiklGBN14fqfld5Xc" Name="Cycles" Kind="OutputPin" />
+                    </Node>
+                  </Patch>
+                  <Pin Id="RPQdai5hVsJNKutmBLmVnX" Name="Node Context" Kind="InputPin" IsHidden="true" />
+                </Node>
+                <ControlPoint Id="KYGUc8jHbWOLtU2W0gER3M" Bounds="371,380" />
+              </Canvas>
+              <Patch Id="AijMqwdrGqIO0mcvmsA4hU" Name="Create" />
+              <ProcessDefinition Id="NOJJoGbWFi0Pi1RM0TuFdD" HasStateOut="true">
+                <Fragment Id="TJf0bgodr6xNJtHZNC2qCH" Patch="AijMqwdrGqIO0mcvmsA4hU" Enabled="true" />
+                <Fragment Id="E8aC47Y2RnmMGOnw6EL6dN" Patch="E6Qoq0W8fJfLdaEkwUVmfQ" Enabled="true" />
+              </ProcessDefinition>
+              <Link Id="OkI3wIe0UJLPSXyboduSYU" Ids="O4tzf5FcWehL7DQjt8Oz2m,Oj0OqFqf6P8MoMzhoPRBTy" IsHidden="true" />
+              <Link Id="NOdMnuKpZKgL6Cry3BDrRf" Ids="OLidkqiklGBN14fqfld5Xc,O4tzf5FcWehL7DQjt8Oz2m" />
+              <Link Id="NMJ2TaFKeuoLbGk6pid4Jc" Ids="RtXMAzHvOOROkDPuAUsv9c,KYGUc8jHbWOLtU2W0gER3M" />
+              <Link Id="GFeuCSN9LpAPIu8iFqCjHJ" Ids="KYGUc8jHbWOLtU2W0gER3M,JIg2UbUyJ5JLCpL2Rchn47" IsHidden="true" />
+              <Patch Id="E6Qoq0W8fJfLdaEkwUVmfQ" Name="Update">
+                <Pin Id="JIg2UbUyJ5JLCpL2Rchn47" Name="Value" Kind="OutputPin" />
+              </Patch>
+            </Patch>
+          </Node>
+          <Node Bounds="260,390,59,19" Id="T8NLDe8na5RMPYGHXCmgKn">
+            <p:NodeReference LastCategoryFullName="Main" LastDependency="Reference SingleInstancePerAppStatefull.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="Counter2" />
+            </p:NodeReference>
+            <Pin Id="MUnpTeSE8HmPNoWGKTZgpD" Name="Output" Kind="StateOutputPin" />
+            <Pin Id="Bj7mdGFbNQ7QZHxkN2PztK" Name="Value" Kind="OutputPin" />
+            <Pin Id="EzL0494oFvwNwdpAfyS9aU" Name="Node Context" Kind="InputPin" IsHidden="true" />
+          </Node>
+          <Pad Id="QesdHqpXNNRO3OO6JHPXKo" Comment="" Bounds="316,469,35,15" ShowValueBox="true" isIOBox="true" />
+          <Node Bounds="379,390,59,19" Id="HDESNSEUqEGQOvduNGBlfi">
+            <p:NodeReference LastCategoryFullName="Main" LastDependency="Reference SingleInstancePerAppStatefull.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="Counter2" />
+            </p:NodeReference>
+            <Pin Id="ToCJrjfWJpbOIBlGAkk94N" Name="Output" Kind="StateOutputPin" />
+            <Pin Id="Qr4yI8WQbzjOJJ1pB8zidK" Name="Value" Kind="OutputPin" />
+            <Pin Id="UUdSvcD4bRKMYS4YWLrIh6" Name="Node Context" Kind="InputPin" IsHidden="true" />
+          </Node>
+          <Pad Id="NSl3LZLjHrGOYOeTtLIqnZ" Comment="" Bounds="435,469,35,15" ShowValueBox="true" isIOBox="true" />
         </Canvas>
         <Patch Id="HNcF0QucgypN69sJwwbno8" Name="Create" />
         <Patch Id="N3zXoS6VGQRLHphxlu4vJ2" Name="Update" />
@@ -146,6 +224,8 @@
         </ProcessDefinition>
         <Link Id="Vh97ZIO8AraNQO8j8Au5iv" Ids="K1thGHyirOCLqrqBUq1Auw,G53cO7WX7GcOE89RUtgChk" />
         <Link Id="Cf8RAB15MRSLzVnyfCVspk" Ids="DGmWA12dOmHP0oKW6DUoYZ,Tg8LE9K9MKTOHgpGgmXguP" />
+        <Link Id="K0mGz0VX1KqPVjadasfp2Y" Ids="Bj7mdGFbNQ7QZHxkN2PztK,QesdHqpXNNRO3OO6JHPXKo" />
+        <Link Id="TWFEV0MJDtlLfaKGNlZ9SU" Ids="Qr4yI8WQbzjOJJ1pB8zidK,NSl3LZLjHrGOYOeTtLIqnZ" />
       </Patch>
     </Node>
   </Patch>
