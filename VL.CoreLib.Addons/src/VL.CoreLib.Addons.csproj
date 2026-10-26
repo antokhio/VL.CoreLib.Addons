@@ -10,4 +10,8 @@
   <ItemGroup>
     <PackageReference Include="VL.Core" Version="2025.7.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="VL.CoreLib.Addons.Tests" />
+  </ItemGroup>
 </Project>

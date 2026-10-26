@@ -5,4 +5,5 @@
     <File Path="README.MD" />
   </Folder>
   <Project Path="VL.CoreLib.Addons/src/VL.CoreLib.Addons.csproj" />
+  <Project Path="VL.CoreLib.Addons/tests/VL.CoreLib.Addons.Tests/VL.CoreLib.Addons.Tests.csproj" />
 </Solution>

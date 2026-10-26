@@ -26,7 +26,8 @@ namespace VL.CoreLib.Addons.Primitives
         : IRegion<ISingleInstanceInlay<T>>,
             IDisposable
     {
-        private readonly NodeContext _context;
+        private readonly UniqueId _nodeId;
+        private readonly Func<UniqueId, IResourceHandle<SharedInstance>> _acquire;
 
         private Func<ISingleInstanceInlay<T>>? _factory;
         private IResourceHandle<SharedInstance>? _handle;
@@ -34,8 +35,38 @@ namespace VL.CoreLib.Addons.Primitives
 
         [Fragment]
         public SingleInstancePerAppRegion(NodeContext nodeContext)
+            : this(
+                // Identifies the region node itself and is the same for all instances of the
+                // surrounding patch. The full path would be unique per instance.
+                nodeContext.Path.Stack.Peek(),
+                nodeId => AcquirePerApp(nodeContext, nodeId)
+            ) { }
+
+        /// <summary>
+        /// Test seam: allows to supply the node id and the pool the shared instance is taken from.
+        /// </summary>
+        internal SingleInstancePerAppRegion(
+            UniqueId nodeId,
+            Func<UniqueId, IResourceHandle<SharedInstance>> acquire
+        )
         {
-            _context = nodeContext;
+            _nodeId = nodeId;
+            _acquire = acquire ?? throw new ArgumentNullException(nameof(acquire));
+        }
+
+        private static IResourceHandle<SharedInstance> AcquirePerApp(
+            NodeContext nodeContext,
+            UniqueId nodeId
+        )
+        {
+            // Pool and frame clock are resolved via AppHost.Current; ensure it is the app this node lives in.
+            using var scope = nodeContext.AppHost.MakeCurrent();
+
+            var frameClock = Clocks.FrameClock;
+
+            return ResourceProvider
+                .NewPooledPerApp(nodeId, _ => new SharedInstance(frameClock))
+                .GetHandle();
         }
 
         void IRegion<ISingleInstanceInlay<T>>.SetPatchInlayFactory(
@@ -44,9 +75,8 @@ namespace VL.CoreLib.Addons.Primitives
         {
             ArgumentNullException.ThrowIfNull(patchInlayFactory);
 
-            if (_factory is not null && _factory.Method != patchInlayFactory.Method)
-                ReleaseHandle();
-
+            // Called again with a new factory after each recompile. The existing inlay is kept on
+            // purpose: VL forwards calls on an outdated inlay to its hot-swapped version, state included.
             _factory = patchInlayFactory;
         }
 
@@ -62,21 +92,7 @@ namespace VL.CoreLib.Addons.Primitives
                     "Patch inlay factory has not been assigned."
                 );
 
-            if (_handle is null)
-            {
-                // Path.Stack.Peek() identifies the region node itself and is the same for all instances
-                // of the surrounding patch. The full path would be unique per instance.
-                // The factory method distinguishes recompiled versions of the inner patch.
-                var key = (_context.Path.Stack.Peek(), factory.Method);
-                // Pool and frame clock are resolved via AppHost.Current; ensure it is the app this node lives in.
-                using var scope = _context.AppHost.MakeCurrent();
-
-                var frameClock = Clocks.FrameClock;
-
-                _handle = ResourceProvider
-                    .NewPooledPerApp(key, _ => new SharedInstance(frameClock))
-                    .GetHandle();
-            }
+            _handle ??= _acquire(_nodeId);
 
             value = _handle.Resource.UpdateOncePerFrame(factory);
         }
@@ -119,22 +135,17 @@ namespace VL.CoreLib.Addons.Primitives
 
             _disposed = true;
 
-            ReleaseHandle();
-
-            _factory = null;
-        }
-
-        private void ReleaseHandle()
-        {
             var handle = _handle;
             _handle = null;
             handle?.Dispose();
+
+            _factory = null;
         }
 
         /// <summary>
         /// The patch inlay shared by all region instances of one app with the same node id.
         /// </summary>
-        private sealed class SharedInstance : IDisposable
+        internal sealed class SharedInstance : IDisposable
         {
             private readonly object _lock = new();
             private readonly IDisposable _ticks;
