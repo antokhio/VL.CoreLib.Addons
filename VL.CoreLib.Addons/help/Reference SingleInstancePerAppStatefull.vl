@@ -148,7 +148,7 @@
             </p:NodeReference>
             <Patch Id="MkL3o8OjbdJOqjrKTWT9HW">
               <Canvas Id="U1aeAwmX9K7Owh3fyLylg4" CanvasType="Group">
-                <Node Bounds="369,228,105,79" Id="FLnyDUMIcQ7NE0RYdY1xzW">
+                <Node Bounds="369,228,198,79" Id="FLnyDUMIcQ7NE0RYdY1xzW">
                   <p:NodeReference LastCategoryFullName="Core.Primitives" LastDependency="VL.CoreLib.Addons.vl">
                     <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
                     <Choice Kind="ProcessAppFlag" Name="SingleInstancePerAppRegion" />
@@ -176,10 +176,12 @@
                       <Pin Id="OLidkqiklGBN14fqfld5Xc" Name="Cycles" Kind="OutputPin" />
                     </Node>
                     <Patch Id="UhLqaPta35AOhEUrAq1jm2" Name="Dispose" />
+                    <Pad Id="NwY9Tbt9HiqOviLRd7pvKY" Comment="Cycles" Bounds="469,271,35,15" ShowValueBox="true" isIOBox="true" />
                   </Patch>
                   <Pin Id="HXagTRQcMBSM9weUdHRqfK" Name="Node Context" Kind="InputPin" IsHidden="true" />
                 </Node>
                 <ControlPoint Id="KYGUc8jHbWOLtU2W0gER3M" Bounds="371,380" />
+                <Pad Id="EgRzvGarVI5QYfQgadzz7S" Comment="" Bounds="473,350,35,15" ShowValueBox="true" isIOBox="true" />
               </Canvas>
               <Patch Id="AijMqwdrGqIO0mcvmsA4hU" Name="Create" />
               <ProcessDefinition Id="NOJJoGbWFi0Pi1RM0TuFdD" HasStateOut="true">
@@ -193,9 +195,11 @@
               <Patch Id="E6Qoq0W8fJfLdaEkwUVmfQ" Name="Update">
                 <Pin Id="JIg2UbUyJ5JLCpL2Rchn47" Name="Value" Kind="OutputPin" />
               </Patch>
+              <Link Id="SXHRfMb5dM9NkJI7Aq9u9F" Ids="OLidkqiklGBN14fqfld5Xc,NwY9Tbt9HiqOviLRd7pvKY" />
+              <Link Id="AaiFAwkeclNOadfKft0QUh" Ids="RtXMAzHvOOROkDPuAUsv9c,EgRzvGarVI5QYfQgadzz7S" />
             </Patch>
           </Node>
-          <Node Bounds="260,390,59,19" Id="T8NLDe8na5RMPYGHXCmgKn">
+          <Node Bounds="252,420,59,19" Id="T8NLDe8na5RMPYGHXCmgKn">
             <p:NodeReference LastCategoryFullName="Main" LastDependency="Reference SingleInstancePerAppStatefull.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="Counter2" />
@@ -205,7 +209,7 @@
             <Pin Id="EzL0494oFvwNwdpAfyS9aU" Name="Node Context" Kind="InputPin" IsHidden="true" />
           </Node>
           <Pad Id="QesdHqpXNNRO3OO6JHPXKo" Comment="" Bounds="316,469,35,15" ShowValueBox="true" isIOBox="true" />
-          <Node Bounds="379,390,59,19" Id="HDESNSEUqEGQOvduNGBlfi">
+          <Node Bounds="374,400,59,19" Id="HDESNSEUqEGQOvduNGBlfi">
             <p:NodeReference LastCategoryFullName="Main" LastDependency="Reference SingleInstancePerAppStatefull.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="Counter2" />
