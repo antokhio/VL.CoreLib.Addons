@@ -1,16 +1,26 @@
-﻿using VL.Core;
+﻿using System.Reactive.Disposables;
+using Microsoft.Extensions.DependencyInjection;
+using VL.Core;
 using VL.Core.Import;
 using VL.Core.PublicAPI;
+using VL.Lang;
 using VL.Lib.Animation;
 using VL.Lib.Basics.Resources;
 
 namespace VL.CoreLib.Addons.Primitives
 {
-    // Someting fishy going on if i move this inside class with
-    // IRegion<SingleInstancePerAppRegion<T>.ISingleInstanceInlay<T>>
-    // signature
+    /// <summary>
+    /// The patch inlay of the <see cref="SingleInstancePerAppRegion{T}"/>.
+    /// </summary>
+    /// <remarks>
+    /// Declared outside of the region class on purpose: nesting it causes issues with the
+    /// IRegion&lt;SingleInstancePerAppRegion&lt;T&gt;.ISingleInstanceInlay&lt;T&gt;&gt; signature.
+    /// </remarks>
     public interface ISingleInstanceInlay<T>
     {
+        /// <summary>
+        /// Executes the patch and returns its result.
+        /// </summary>
         T Produce();
     }
 
@@ -26,11 +36,17 @@ namespace VL.CoreLib.Addons.Primitives
         : IRegion<ISingleInstanceInlay<T>>,
             IDisposable
     {
+        internal const string LinkWarningMessage =
+            "Links into this region are not supported. The patch inside is shared by all instances.";
+
         private readonly UniqueId _nodeId;
         private readonly Func<UniqueId, IResourceHandle<SharedInstance>> _acquire;
+        private readonly Func<IDisposable> _addLinkWarning;
 
         private Func<ISingleInstanceInlay<T>>? _factory;
         private IResourceHandle<SharedInstance>? _handle;
+        private IDisposable? _linkWarning;
+        private bool _linkAcknowledged;
         private bool _disposed;
 
         [Fragment]
@@ -39,19 +55,23 @@ namespace VL.CoreLib.Addons.Primitives
                 // Identifies the region node itself and is the same for all instances of the
                 // surrounding patch. The full path would be unique per instance.
                 nodeContext.Path.Stack.Peek(),
-                nodeId => AcquirePerApp(nodeContext, nodeId)
+                nodeId => AcquirePerApp(nodeContext, nodeId),
+                () => AddLinkWarning(nodeContext)
             ) { }
 
         /// <summary>
-        /// Test seam: allows to supply the node id and the pool the shared instance is taken from.
+        /// Test seam: allows to supply the node id, the pool the shared instance is taken from
+        /// and the way the link warning is shown.
         /// </summary>
         internal SingleInstancePerAppRegion(
             UniqueId nodeId,
-            Func<UniqueId, IResourceHandle<SharedInstance>> acquire
+            Func<UniqueId, IResourceHandle<SharedInstance>> acquire,
+            Func<IDisposable>? addLinkWarning = null
         )
         {
             _nodeId = nodeId;
             _acquire = acquire ?? throw new ArgumentNullException(nameof(acquire));
+            _addLinkWarning = addLinkWarning ?? (() => Disposable.Empty);
         }
 
         private static IResourceHandle<SharedInstance> AcquirePerApp(
@@ -59,14 +79,34 @@ namespace VL.CoreLib.Addons.Primitives
             UniqueId nodeId
         )
         {
-            // Pool and frame clock are resolved via AppHost.Current; ensure it is the app this node lives in.
-            using var scope = nodeContext.AppHost.MakeCurrent();
+            var appHost = nodeContext.AppHost;
 
-            var frameClock = Clocks.FrameClock;
+            // Clocks.FrameClock is cached per thread and might belong to another app, so the clock
+            // is taken from this node's app host directly.
+            var frameClock = appHost.Services.GetRequiredService<IFrameClock>();
+
+            // The per-app pool is resolved via AppHost.Current; ensure it is the app this node lives in.
+            using var scope = appHost.MakeCurrent();
 
             return ResourceProvider
                 .NewPooledPerApp(nodeId, _ => new SharedInstance(frameClock))
                 .GetHandle();
+        }
+
+        private static IDisposable AddLinkWarning(NodeContext nodeContext)
+        {
+            // The runtime is resolved via AppHost.Current; ensure it is the app this node lives in.
+            using var scope = nodeContext.AppHost.MakeCurrent();
+
+            // Equivalent of NodeContext.AddPersistentMessage(..., includeAncestors: false), which
+            // isn't available in VL.Core 2025.7.0. The top of the path is the node's local id.
+            var runtime = IVLRuntime.Current;
+            if (runtime is null)
+                return Disposable.Empty;
+
+            return runtime.AddPersistentMessage(
+                new Message(nodeContext.Path.Stack.Peek(), MessageSeverity.Warning, LinkWarningMessage)
+            );
         }
 
         void IRegion<ISingleInstanceInlay<T>>.SetPatchInlayFactory(
@@ -80,11 +120,17 @@ namespace VL.CoreLib.Addons.Primitives
             _factory = patchInlayFactory;
         }
 
+        /// <summary>
+        /// Executes the shared patch once per frame across all instances of this region node.
+        /// </summary>
+        /// <param name="value">The value produced by the patch in the current frame.</param>
         [Fragment]
         public void Update(out T value)
         {
-            if (_disposed)
-                throw new ObjectDisposedException(nameof(SingleInstancePerAppRegion<T>));
+            ObjectDisposedException.ThrowIf(_disposed, this);
+
+            // Done first so that an exception further down can't keep a stale warning alive.
+            UpdateLinkWarning();
 
             var factory =
                 _factory
@@ -97,12 +143,44 @@ namespace VL.CoreLib.Addons.Primitives
             value = _handle.Resource.UpdateOncePerFrame(factory);
         }
 
+        // VL calls AcknowledgeInput for every link crossing into the region before each Update,
+        // but doesn't notify when a link is removed; the calls just stop.
+        private void UpdateLinkWarning()
+        {
+            if (!_linkAcknowledged)
+                RemoveLinkWarning();
+
+            _linkAcknowledged = false;
+        }
+
+        private void RemoveLinkWarning()
+        {
+            var warning = _linkWarning;
+            _linkWarning = null;
+            warning?.Dispose();
+        }
+
         // Border control points are not supported (see Region attribute), so there is no input
         // or output data to pass. The value is returned via Produce's typed return value.
+        // Links can't be supported either since all instances share one inlay, so the user gets a warning.
         void IRegion<ISingleInstanceInlay<T>>.AcknowledgeInput(
             in InputDescription description,
             object? outerValue
-        ) { }
+        )
+        {
+            if (_disposed || !description.IsLink)
+                return;
+
+            _linkAcknowledged = true;
+
+            if (_linkWarning is not null)
+                return;
+
+            // Empty means no runtime was available; don't keep it so the next call retries.
+            var warning = _addLinkWarning();
+            if (!ReferenceEquals(warning, Disposable.Empty))
+                _linkWarning = warning;
+        }
 
         void IRegion<ISingleInstanceInlay<T>>.RetrieveInput(
             in InputDescription description,
@@ -135,6 +213,8 @@ namespace VL.CoreLib.Addons.Primitives
 
             _disposed = true;
 
+            RemoveLinkWarning();
+
             var handle = _handle;
             _handle = null;
             handle?.Dispose();
@@ -147,17 +227,21 @@ namespace VL.CoreLib.Addons.Primitives
         /// </summary>
         internal sealed class SharedInstance : IDisposable
         {
+            private const ulong NeverUpdated = ulong.MaxValue;
+
             private readonly object _lock = new();
             private readonly IDisposable _ticks;
             private ISingleInstanceInlay<T>? _inlay;
-            private long _frame;
-            private long _lastUpdatedFrame = -1;
+            private ulong _frame;
+            private ulong _lastUpdatedFrame = NeverUpdated;
             private T _value = default!;
             private bool _disposed;
 
             public SharedInstance(IFrameClock frameClock)
             {
-                _ticks = frameClock.GetTicks().Subscribe(_ => Interlocked.Increment(ref _frame));
+                _ticks = frameClock
+                    .GetTicks()
+                    .Subscribe(m => Volatile.Write(ref _frame, m.FrameNumber));
             }
 
             /// <summary>
@@ -170,7 +254,7 @@ namespace VL.CoreLib.Addons.Primitives
                 {
                     ObjectDisposedException.ThrowIf(_disposed, this);
 
-                    var frame = Interlocked.Read(ref _frame);
+                    var frame = Volatile.Read(ref _frame);
                     if (frame == _lastUpdatedFrame)
                         return _value;
 

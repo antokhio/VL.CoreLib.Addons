@@ -224,12 +224,103 @@ public class SingleInstancePerAppRegionTests
         Assert.Throws<ObjectDisposedException>(() => region.Update(out _));
     }
 
+    [Test]
+    public void AcknowledgeInput_Link_AddsWarningOnce()
+    {
+        var warnings = new WarningRecorder();
+        var region = CreateRegion(NewNodeId(), CompiledVersion1(), warnings.Add);
+
+        for (var i = 0; i < 3; i++)
+        {
+            AsRegion(region).AcknowledgeInput(Link, 0);
+            NextFrame();
+            region.Update(out _);
+        }
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(warnings.Added, Is.EqualTo(1));
+            Assert.That(warnings.Active, Is.EqualTo(1));
+        });
+    }
+
+    [Test]
+    public void AcknowledgeInput_BorderInput_AddsNoWarning()
+    {
+        var warnings = new WarningRecorder();
+        var region = CreateRegion(NewNodeId(), CompiledVersion1(), warnings.Add);
+        var borderInput = new InputDescription("cp", typeof(int), typeof(int));
+
+        AsRegion(region).AcknowledgeInput(borderInput, 0);
+        NextFrame();
+        region.Update(out _);
+
+        Assert.That(warnings.Added, Is.EqualTo(0));
+    }
+
+    // VL doesn't notify about removed links, the AcknowledgeInput calls just stop.
+    [Test]
+    public void Update_LinkNoLongerAcknowledged_RemovesWarning()
+    {
+        var warnings = new WarningRecorder();
+        var region = CreateRegion(NewNodeId(), CompiledVersion1(), warnings.Add);
+        AsRegion(region).AcknowledgeInput(Link, 0);
+        NextFrame();
+        region.Update(out _);
+
+        NextFrame();
+        region.Update(out _);
+
+        Assert.That(warnings.Active, Is.EqualTo(0));
+    }
+
+    [Test]
+    public void Dispose_WithActiveLinkWarning_RemovesWarning()
+    {
+        var warnings = new WarningRecorder();
+        var region = CreateRegion(NewNodeId(), CompiledVersion1(), warnings.Add);
+        AsRegion(region).AcknowledgeInput(Link, 0);
+
+        region.Dispose();
+
+        Assert.That(warnings.Active, Is.EqualTo(0));
+    }
+
+    // Disposable.Empty is returned when no runtime is available, so the warning must be retried.
+    [Test]
+    public void AcknowledgeInput_NoRuntimeAvailable_RetriesOnNextLink()
+    {
+        var calls = 0;
+        var region = CreateRegion(
+            NewNodeId(),
+            CompiledVersion1(),
+            () =>
+            {
+                calls++;
+                return System.Reactive.Disposables.Disposable.Empty;
+            }
+        );
+
+        AsRegion(region).AcknowledgeInput(Link, 0);
+        AsRegion(region).AcknowledgeInput(Link, 0);
+
+        Assert.That(calls, Is.EqualTo(2));
+    }
+
+    private static readonly InputDescription Link = new(
+        "link",
+        typeof(int),
+        typeof(int),
+        IsLink: true
+    );
+
     private SingleInstancePerAppRegion<int> CreateRegion(
         UniqueId nodeId,
-        Func<ISingleInstanceInlay<int>> factory
+        Func<ISingleInstanceInlay<int>> factory,
+        Func<IDisposable>? addLinkWarning = null
     )
     {
-        var region = new SingleInstancePerAppRegion<int>(nodeId, AcquireFromPool);
+        var region = new SingleInstancePerAppRegion<int>(nodeId, AcquireFromPool, addLinkWarning);
         AsRegion(region).SetPatchInlayFactory(factory);
         _regions.Add(region);
         return region;
@@ -269,6 +360,34 @@ public class SingleInstancePerAppRegionTests
         public int Produce() => ++ProduceCalls;
 
         public void Dispose() => IsDisposed = true;
+    }
+
+    private sealed class WarningRecorder
+    {
+        public int Added { get; private set; }
+
+        public int Active { get; private set; }
+
+        public IDisposable Add()
+        {
+            Added++;
+            Active++;
+            return new Warning(this);
+        }
+
+        private sealed class Warning(WarningRecorder recorder) : IDisposable
+        {
+            private bool _disposed;
+
+            public void Dispose()
+            {
+                if (_disposed)
+                    return;
+
+                _disposed = true;
+                recorder.Active--;
+            }
+        }
     }
 
     private sealed class RefCountedPool<TResource>
